@@ -36,6 +36,7 @@ navbar {
     list-style-type: none;
 
     a {
+      color: $primary;
       padding: 0.5rem 1rem;
       border-radius: 6px;
       cursor: pointer;
@@ -52,6 +53,6 @@ navbar {
   }
 }
 .main-content {
-  padding: 0 4rem;
+  padding: 0 6rem;
 }
 </style>
