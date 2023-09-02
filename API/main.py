@@ -13,12 +13,6 @@ import io
 app = FastAPI()
 
 
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Union[bool, None] = None
-
-
 @app.post("/")
 def read_root(file: UploadFile):
 
@@ -37,5 +31,8 @@ def read_root(file: UploadFile):
     output = io.BytesIO()
     sound.export(output, format="mp3")
 
+    # New file name
+    newfilename = file.filename.replace('.wav', '')
+
     # Return the response
-    return Response(content=output.read(), media_type="audio/mp3", headers={"Content-Disposition": 'attachment; filename="test.mp3"'})
+    return Response(content=output.read(), media_type="audio/mp3", headers={"Content-Disposition": f'attachment; filename="{newfilename}.mp3"'})
