@@ -1,6 +1,6 @@
 <template>
   <navbar>
-    <h2>Audio Converter</h2>
+    <a class="logo"><font-awesome-icon icon="fa-solid fa-play" /></a>
     <ul>
       <li>
         <a class="selected">WAV Converter</a>
@@ -13,17 +13,23 @@
   <div class="main-content">
     <NuxtPage />
   </div>
+  <div class="terms-conditions-wrap">
+    <a>About</a>
+    <div>|</div>
+    <a>Terms and Conditions</a>
+  </div>
 </template>
 
 <style scoped lang="scss">
 navbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0 4rem;
 
-  h2 {
+  .logo {
     color: $secondary;
-    cursor: pointer;
+    font-size: 2.5rem;
   }
 
   ul {
@@ -53,6 +59,31 @@ navbar {
   }
 }
 .main-content {
-  padding: 0 6rem;
+  padding: 0 6rem 4rem 6rem;
+}
+
+.terms-conditions-wrap {
+  position: fixed;
+  bottom: 1rem;
+  right: 4rem;
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  font-size: 0.75rem;
+  font-weight: 500;
+
+  color: $primaryLight;
+
+  a {
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $primaryExtraLight;
+    }
+  }
 }
 </style>
