@@ -3,7 +3,7 @@
     <h2>Audio Converter</h2>
     <ul>
       <li>
-        <a class="selected">Converter</a>
+        <a class="selected">WAV Converter</a>
       </li>
       <li>
         <a>Trim</a>
@@ -23,6 +23,7 @@ navbar {
 
   h2 {
     color: $secondary;
+    cursor: pointer;
   }
 
   ul {
