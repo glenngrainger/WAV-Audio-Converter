@@ -3,10 +3,13 @@
 <template>
   <div class="file-drop-area">
     <div class="drop-text-wrap">
-      <h3>img</h3>
-      <p>Click or drop your files</p>
+      <div class="icon-wrap">
+        <font-awesome-icon icon="fa-solid fa-cloud-arrow-up" />
+      </div>
+      <p>Click or drop your files here</p>
     </div>
   </div>
+  <p class="wav-message">Only WAV file currently supported</p>
 </template>
 
 <style scoped lang="scss">
@@ -27,23 +30,38 @@
   cursor: pointer;
 
   .drop-text-wrap {
+    font-weight: 500;
     color: $secondary;
-    h3 {
+    .icon-wrap {
       text-align: center;
+      .fa-cloud-arrow-up {
+        font-size: 3rem;
+        transition: font-size 0.25s ease-in-out;
+      }
     }
 
     p {
+      font-size: 1.25rem;
+      margin-top: 1.5rem;
       transition: font-size 0.25s ease-in-out;
-      font-weight: 600;
     }
   }
 
   &:hover {
     background-color: $primaryVeryLight;
 
-    .drop-text-wrap > p {
-      font-size: 1.25rem;
+    .drop-text-wrap {
+      .fa-cloud-arrow-up {
+        font-size: 4rem;
+      }
+
+      p {
+        font-size: 1.6rem;
+      }
     }
   }
+}
+.wav-message {
+  color: $primaryLight;
 }
 </style>

@@ -17,7 +17,10 @@ export default defineNuxtConfig({
       ],
     },
   },
-  css: ["~/assets/css/main.scss"],
+  css: [
+    "~/assets/css/main.scss",
+    "@fortawesome/fontawesome-svg-core/styles.css",
+  ],
   vite: {
     css: {
       preprocessorOptions: {
