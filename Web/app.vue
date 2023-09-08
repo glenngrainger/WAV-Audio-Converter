@@ -5,19 +5,16 @@
       <li>
         <a class="selected">WAV Converter</a>
       </li>
-      <li>
-        <a>Trim</a>
-      </li>
     </ul>
   </navbar>
   <div class="main-content">
     <NuxtPage />
   </div>
-  <div class="terms-conditions-wrap">
+  <!-- <div class="terms-conditions-wrap">
     <a>About</a>
     <div>|</div>
     <a>Terms and Conditions</a>
-  </div>
+  </div> -->
 </template>
 
 <style scoped lang="scss">
@@ -44,16 +41,14 @@ navbar {
     a {
       color: $primary;
       padding: 0.5rem 1rem;
-      border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.25s ease-in-out;
 
       &:hover {
-        background-color: $primaryVeryLight;
+        border-bottom: 2px solid $secondary;
       }
 
       &.selected {
-        background-color: $primaryVeryLight;
+        border-bottom: 2px solid $secondary;
       }
     }
   }
