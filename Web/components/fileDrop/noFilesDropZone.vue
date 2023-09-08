@@ -10,7 +10,7 @@
       <div class="icon-wrap">
         <font-awesome-icon icon="fa-solid fa-cloud-arrow-up" />
       </div>
-      <p>Click or drop your files here</p>
+      <p>Drop your files here</p>
     </div>
   </div>
 </template>

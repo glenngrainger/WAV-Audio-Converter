@@ -19,18 +19,27 @@ function dropFileHandler(e) {
     tempFilesArray.push([...e.dataTransfer.files]);
   }
 
-  if (validateFileSize(tempFilesArray)) {
-    files.value.push(tempFilesArray);
-    console.log(files);
-  } else {
+  if (!validateFileSize(tempFilesArray)) {
     console.log("File too large");
   }
+
+  tempFilesArray.forEach((file) =>
+    files.value.push({
+      file,
+      converted: false,
+      fileSizeMb: Math.round(getFileSize(file) / 1000),
+    })
+  );
 }
 
 function validateFileSize(files) {
   return files.every((file) => {
-    return file.size / 1024 <= 50000;
+    return getFileSize(file) <= 50000;
   });
+}
+
+function getFileSize(file) {
+  return file.size / 1024;
 }
 
 function dragOverHandler(e) {
@@ -39,20 +48,33 @@ function dragOverHandler(e) {
 </script>
 
 <template>
-  <div v-if="files.length == 0">
-    <NoFilesDropZone
-      @dragOverHandler="dragOverHandler"
-      @dropFileHandler="dropFileHandler"
-    />
-  </div>
-  <div v-else>
-    <FilesList :files="files" />
-  </div>
+  <Transition name="fade">
+    <div v-if="files.length == 0">
+      <NoFilesDropZone
+        @dragOverHandler="dragOverHandler"
+        @dropFileHandler="dropFileHandler"
+      />
+    </div>
+    <div v-else>
+      <FilesList :files="files" />
+    </div>
+  </Transition>
   <p class="wav-message">Only WAV file currently supported. Max 50mb.</p>
 </template>
 
 <style scoped lang="scss">
 .wav-message {
   color: $primaryLight;
+}
+
+// TODO
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
