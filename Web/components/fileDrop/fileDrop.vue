@@ -4,6 +4,7 @@ import NoFilesDropZone from "./noFilesDropZone.vue";
 import FilesList from "./filesList/filesList.vue";
 
 const files = ref([]);
+const isTransferring = ref(false);
 
 function dropFileHandler(e) {
   e.preventDefault();
@@ -38,6 +39,13 @@ function validateFileSize(files) {
   });
 }
 
+function initConvert(e) {
+  e.preventDefault();
+  isTransferring.value = true;
+
+  setTimeout(() => (isTransferring.value = false), 2000);
+}
+
 function getFileSize(file) {
   return file.size / 1024;
 }
@@ -56,10 +64,14 @@ function dragOverHandler(e) {
       />
     </div>
     <div v-else>
-      <FilesList :files="files" />
+      <FilesList
+        :files="files"
+        :isTransferring="isTransferring"
+        @initConvert="initConvert"
+      />
     </div>
   </Transition>
-  <p class="wav-message">Only WAV file currently supported. Max 50mb.</p>
+  <p class="wav-message">Only WAV files currently supported. Max 50mb.</p>
 </template>
 
 <style scoped lang="scss">

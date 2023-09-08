@@ -1,5 +1,5 @@
 <script setup>
-const { files } = defineProps(["files"]);
+const { files, isTransferring } = defineProps(["files", "isTransferring"]);
 </script>
 
 <template>
@@ -14,8 +14,13 @@ const { files } = defineProps(["files"]);
       </div>
     </li>
   </ul>
-  <div class="btn-wrap">
-    <button class="convert-btn">Convert</button>
+  <div class="btn-wrap" v-if="isTransferring">
+    <button class="convert-btn currently-converting">Converting...</button>
+  </div>
+  <div class="btn-wrap" v-else>
+    <button class="convert-btn" @click="(e) => $emit('initConvert', e)">
+      Convert
+    </button>
   </div>
 </template>
 
@@ -87,6 +92,15 @@ ul {
 
     &:hover {
       background-color: $secondaryLight;
+    }
+
+    &.currently-converting {
+      color: $primaryLight;
+      background-color: $primaryVeryLight;
+
+      &:hover {
+        background-color: $primaryExtraLight;
+      }
     }
   }
 }
