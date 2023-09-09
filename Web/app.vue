@@ -1,14 +1,16 @@
 <template>
-  <navbar>
+  <nav>
     <a class="logo"><font-awesome-icon icon="fa-solid fa-play" /></a>
     <ul>
       <li>
         <a class="selected">WAV Converter</a>
       </li>
     </ul>
-  </navbar>
+  </nav>
   <div class="main-content">
-    <NuxtPage />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
   <!-- <div class="terms-conditions-wrap">
     <a>About</a>
@@ -17,8 +19,8 @@
   </div> -->
 </template>
 
-<style scoped lang="scss">
-navbar {
+<style lang="scss" scoped>
+nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
