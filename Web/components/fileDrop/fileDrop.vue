@@ -5,7 +5,8 @@ import NoFilesDropZone from "./noFilesDropZone.vue";
 import FilesList from "./filesList/filesList.vue";
 
 const files = ref([]);
-const isTransferring = ref(false);
+const isConverting = ref(false);
+const convertionComplete = ref(false);
 
 function dropFileHandler(e) {
   e.preventDefault();
@@ -21,16 +22,15 @@ function dropFileHandler(e) {
     tempFilesArray.push([...e.dataTransfer.files]);
   }
 
-  if (!validateFileSize(tempFilesArray)) {
-    console.log("File too large");
-  }
+  let tooLarge = !validateFileSize(tempFilesArray);
 
   tempFilesArray.forEach((file) =>
     files.value.push({
       file,
       converted: false,
       currentlyTransfering: false,
-      error: false,
+      error: tooLarge,
+      errorMessage: tooLarge ? "Too large" : "",
       download: undefined,
       fileSizeMb: Math.round(getFileSize(file) / 1000),
     })
@@ -45,39 +45,49 @@ function validateFileSize(files) {
 
 async function initConvert(e) {
   e.preventDefault();
-  isTransferring.value = true;
+  isConverting.value = true;
+
+  let promises = [];
 
   files.value.forEach(async (file) => {
-    if (!file.converted) {
-      file.currentlyTransfering = true;
-      try {
-        let formData = new FormData();
-        formData.append("file", file.file);
+    promises.push(
+      new Promise(async (resolve, reject) => {
+        if (!file.converted && !file.error) {
+          file.currentlyTransfering = true;
+          try {
+            let formData = new FormData();
+            formData.append("file", file.file);
 
-        let resp = await axios.post("/", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-          responseType: "blob",
-        });
+            let resp = await axios.post("/", formData, {
+              headers: { "Content-Type": "multipart/form-data" },
+              responseType: "blob",
+            });
 
-        file.download = {
-          blob: await resp.data,
-          fileName: file.file.name,
-        };
+            file.download = {
+              blob: await resp.data,
+              fileName: file.file.name.replace(".wav", ".mp3"),
+            };
 
-        if (resp.status === 200) {
-          file.converted = true;
-        } else {
-          file.error = true;
+            if (resp.status === 200) {
+              file.converted = true;
+            } else {
+              file.error = true;
+            }
+          } catch (err) {
+            file.error = true;
+          }
+
+          file.currentlyTransfering = false;
         }
-      } catch (err) {
-        file.error = true;
-      }
-
-      file.currentlyTransfering = false;
-    }
+        resolve();
+      })
+    );
   });
 
-  isTransferring.value = false;
+  Promise.all(promises).then(() => {
+    isConverting.value = false;
+    convertionComplete.value = true;
+  });
 }
 
 function getFileSize(file) {
@@ -86,6 +96,12 @@ function getFileSize(file) {
 
 function dragOverHandler(e) {
   e.preventDefault();
+}
+
+function finishHandler() {
+  convertionComplete.value = false;
+  isConverting.value = false;
+  files.value = [];
 }
 </script>
 
@@ -100,8 +116,10 @@ function dragOverHandler(e) {
     <div v-else>
       <FilesList
         @initConvert="initConvert"
+        @finishHandler="finishHandler"
         :files="files"
-        :isTransferring="isTransferring"
+        :isConverting="isConverting"
+        :convertionComplete="convertionComplete"
       />
     </div>
   </Transition>

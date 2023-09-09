@@ -1,5 +1,9 @@
 <script setup>
-const { files, isTransferring } = defineProps(["files", "isTransferring"]);
+const { files, isTransferring } = defineProps([
+  "files",
+  "isConverting",
+  "convertionComplete",
+]);
 
 function downloadFile(fileDetails) {
   if (fileDetails.download) {
@@ -35,6 +39,11 @@ function downloadFile(fileDetails) {
                 @click="downloadFile(file)"
               />
             </div>
+            <div v-else-if="file.error">
+              <div class="convert-error">
+                {{ file.errorMessage ? file.errorMessage : "Error" }}
+              </div>
+            </div>
             <div v-else>
               <font-awesome-icon icon="fa-solid fa-close" />
             </div>
@@ -42,11 +51,22 @@ function downloadFile(fileDetails) {
         </div>
       </li>
     </ul>
-    <div class="btn-wrap" v-if="isTransferring">
-      <button class="convert-btn currently-converting">Converting...</button>
+    <div class="btn-wrap" v-if="isConverting">
+      <button class="action-btn currently-converting">Converting...</button>
+    </div>
+    <div
+      class="btn-wrap"
+      v-else-if="
+        convertionComplete ||
+        files.every((file) => file.error || file.converted)
+      "
+    >
+      <button class="action-btn back" @click="$emit('finishHandler')">
+        Finish
+      </button>
     </div>
     <div class="btn-wrap" v-else>
-      <button class="convert-btn" @click="(e) => $emit('initConvert', e)">
+      <button class="action-btn" @click="(e) => $emit('initConvert', e)">
         Convert
       </button>
     </div>
@@ -91,9 +111,13 @@ ul {
 
       .details-wrap {
         height: 20px;
-        width: 20px;
         svg {
           cursor: pointer;
+        }
+
+        .convert-error {
+          font-weight: 500;
+          color: $danger;
         }
       }
     }
@@ -108,7 +132,7 @@ ul {
 .btn-wrap {
   display: flex;
   align-items: center;
-  .convert-btn {
+  .action-btn {
     cursor: pointer;
 
     font-size: 1.5rem;
@@ -129,6 +153,15 @@ ul {
 
     &.currently-converting {
       color: $primaryLight;
+      background-color: $primaryVeryLight;
+
+      &:hover {
+        background-color: $primaryExtraLight;
+      }
+    }
+
+    &.back {
+      color: $primary;
       background-color: $primaryVeryLight;
 
       &:hover {
