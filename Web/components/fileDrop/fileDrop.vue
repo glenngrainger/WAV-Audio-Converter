@@ -131,13 +131,16 @@ function finishHandler() {
   color: $primaryLight;
 }
 
-// TODO
-.fade-enter-active,
-.fade-leave-active {
+.fade-enter-active {
   transition: opacity 0.5s ease;
 }
+.fade-leave-active {
+  display: none;
+}
 
-.fade-enter-from,
+.fade-enter-from {
+  opacity: 0;
+}
 .fade-leave-to {
   opacity: 0;
 }
