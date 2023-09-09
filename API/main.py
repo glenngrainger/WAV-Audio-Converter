@@ -2,6 +2,7 @@ from typing import Union, Annotated
 
 from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.responses import FileResponse, Response, StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from starlette import status
 
 from pydantic import BaseModel
@@ -11,6 +12,20 @@ from pydub import AudioSegment
 import io
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000"
+]
+
+methods = [
+    "POST"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=methods
+)
 
 
 @app.post("/")

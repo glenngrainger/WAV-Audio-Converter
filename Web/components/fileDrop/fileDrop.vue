@@ -1,4 +1,5 @@
 <script setup>
+import axios from "axios";
 import { ref } from "vue";
 import NoFilesDropZone from "./noFilesDropZone.vue";
 import FilesList from "./filesList/filesList.vue";
@@ -28,6 +29,9 @@ function dropFileHandler(e) {
     files.value.push({
       file,
       converted: false,
+      currentlyTransfering: false,
+      error: false,
+      download: undefined,
       fileSizeMb: Math.round(getFileSize(file) / 1000),
     })
   );
@@ -39,11 +43,41 @@ function validateFileSize(files) {
   });
 }
 
-function initConvert(e) {
+async function initConvert(e) {
   e.preventDefault();
   isTransferring.value = true;
 
-  setTimeout(() => (isTransferring.value = false), 2000);
+  files.value.forEach(async (file) => {
+    if (!file.converted) {
+      file.currentlyTransfering = true;
+      try {
+        let formData = new FormData();
+        formData.append("file", file.file);
+
+        let resp = await axios.post("/", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          responseType: "blob",
+        });
+
+        file.download = {
+          blob: await resp.data,
+          fileName: file.file.name,
+        };
+
+        if (resp.status === 200) {
+          file.converted = true;
+        } else {
+          file.error = true;
+        }
+      } catch (err) {
+        file.error = true;
+      }
+
+      file.currentlyTransfering = false;
+    }
+  });
+
+  isTransferring.value = false;
 }
 
 function getFileSize(file) {
@@ -65,9 +99,9 @@ function dragOverHandler(e) {
     </div>
     <div v-else>
       <FilesList
+        @initConvert="initConvert"
         :files="files"
         :isTransferring="isTransferring"
-        @initConvert="initConvert"
       />
     </div>
   </Transition>

@@ -1,6 +1,8 @@
 <script setup>
 import PageSummary from "~/components/textContent/pageSummary.vue";
 import FileDrop from "~/components/fileDrop/fileDrop.vue";
+import axios from "axios";
+axios.defaults.baseURL = "http://127.0.0.1:8000";
 </script>
 <template>
   <PageSummary

@@ -1,26 +1,55 @@
 <script setup>
 const { files, isTransferring } = defineProps(["files", "isTransferring"]);
+
+function downloadFile(fileDetails) {
+  if (fileDetails.download) {
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(fileDetails.download.blob);
+    link.download = fileDetails.download.fileName;
+
+    document.body.append(link);
+
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+  }
+}
 </script>
 
 <template>
-  <ul>
-    <li v-for="file in files">
-      <div class="file-wrap">
-        <div class="file-name-wrap">
-          <div class="name">{{ file.file.name }}</div>
-          <div class="size">{{ file.fileSizeMb }} mb</div>
+  <div>
+    <ul>
+      <li v-for="file in files">
+        <div class="file-wrap">
+          <div class="file-name-wrap">
+            <div class="name">{{ file.file.name }}</div>
+            <div class="size">{{ file.fileSizeMb }} mb</div>
+          </div>
+          <div class="details-wrap">
+            <div v-if="file.currentlyTransfering">
+              <div class="loader"></div>
+            </div>
+            <div v-else-if="file.converted">
+              <font-awesome-icon
+                icon="fa-solid fa-download"
+                @click="downloadFile(file)"
+              />
+            </div>
+            <div v-else>
+              <font-awesome-icon icon="fa-solid fa-close" />
+            </div>
+          </div>
         </div>
-        <font-awesome-icon icon="fa-solid fa-close" />
-      </div>
-    </li>
-  </ul>
-  <div class="btn-wrap" v-if="isTransferring">
-    <button class="convert-btn currently-converting">Converting...</button>
-  </div>
-  <div class="btn-wrap" v-else>
-    <button class="convert-btn" @click="(e) => $emit('initConvert', e)">
-      Convert
-    </button>
+      </li>
+    </ul>
+    <div class="btn-wrap" v-if="isTransferring">
+      <button class="convert-btn currently-converting">Converting...</button>
+    </div>
+    <div class="btn-wrap" v-else>
+      <button class="convert-btn" @click="(e) => $emit('initConvert', e)">
+        Convert
+      </button>
+    </div>
   </div>
 </template>
 
@@ -40,7 +69,7 @@ ul {
     list-style-type: none;
 
     .file-wrap {
-      padding: 2rem;
+      padding: 1.5rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -60,8 +89,12 @@ ul {
         }
       }
 
-      svg {
-        cursor: pointer;
+      .details-wrap {
+        height: 20px;
+        width: 20px;
+        svg {
+          cursor: pointer;
+        }
       }
     }
 
@@ -102,6 +135,24 @@ ul {
         background-color: $primaryExtraLight;
       }
     }
+  }
+}
+
+.loader {
+  border: 2px solid $primaryVeryLight; /* Light grey */
+  border-top: 2px solid $secondary; /* Blue */
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>
