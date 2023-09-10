@@ -22,7 +22,7 @@ function downloadFile(fileDetails) {
 
 <template>
   <div>
-    <ul>
+    <TransitionGroup name="list" tag="ul">
       <li v-for="file in files">
         <div class="file-wrap">
           <div class="file-name-wrap">
@@ -45,12 +45,15 @@ function downloadFile(fileDetails) {
               </div>
             </div>
             <div v-else>
-              <font-awesome-icon icon="fa-solid fa-close" />
+              <font-awesome-icon
+                icon="fa-solid fa-close"
+                @click="() => $emit('removeFileHandler', file)"
+              />
             </div>
           </div>
         </div>
       </li>
-    </ul>
+    </TransitionGroup>
     <div class="btn-wrap" v-if="isConverting">
       <button class="action-btn currently-converting">Converting...</button>
     </div>
@@ -171,6 +174,7 @@ ul {
   }
 }
 
+// Loader
 .loader {
   border: 2px solid $primaryVeryLight; /* Light grey */
   border-top: 2px solid $secondary; /* Blue */
@@ -187,5 +191,16 @@ ul {
   100% {
     transform: rotate(360deg);
   }
+}
+
+// List remove file transition https://vuejs.org/guide/built-ins/transition-group.html#enter-leave-transitions
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 </style>

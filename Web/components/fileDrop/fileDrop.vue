@@ -98,6 +98,10 @@ function dragOverHandler(e) {
   e.preventDefault();
 }
 
+function removeFileHandler(fileToRemove) {
+  files.value = files.value.filter((file) => file.file !== fileToRemove.file);
+}
+
 function finishHandler() {
   convertionComplete.value = false;
   isConverting.value = false;
@@ -117,6 +121,7 @@ function finishHandler() {
       <FilesList
         @initConvert="initConvert"
         @finishHandler="finishHandler"
+        @removeFileHandler="removeFileHandler"
         :files="files"
         :isConverting="isConverting"
         :convertionComplete="convertionComplete"
