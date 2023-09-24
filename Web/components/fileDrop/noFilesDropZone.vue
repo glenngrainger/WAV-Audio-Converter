@@ -1,10 +1,21 @@
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+const isDragOver = ref(false);
+
+function dragOverHandler(e) {
+  e.preventDefault();
+  isDragOver.value = true;
+  $emit("dragOverHandler", e);
+}
+</script>
 
 <template>
   <div
     class="file-drop-area"
+    :class="{ dragover: isDragOver }"
     @drop="(e) => $emit('dropFileHandler', e)"
-    @dragover="(e) => $emit('dragOverHandler', e)"
+    @dragover="(e) => dragOverHandler(e)"
+    @dragleave="(e) => (isDragOver = false)"
   >
     <div class="drop-text-wrap">
       <div class="icon-wrap">
@@ -50,7 +61,8 @@
     }
   }
 
-  &:hover {
+  &:hover,
+  &.dragover {
     background-color: $primaryVeryLight;
 
     .drop-text-wrap {
