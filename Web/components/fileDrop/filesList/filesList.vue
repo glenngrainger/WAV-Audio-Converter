@@ -30,7 +30,7 @@ function downloadFile(fileDetails) {
             <div class="size">{{ file.fileSizeMb }} mb</div>
           </div>
           <div class="details-wrap">
-            <div v-if="file.currentlyTransfering">
+            <div v-if="file.currentlyConverting">
               <div class="loader"></div>
             </div>
             <div v-else-if="file.converted">
@@ -176,8 +176,8 @@ ul {
 
 // Loader
 .loader {
-  border: 2px solid $primaryVeryLight; /* Light grey */
-  border-top: 2px solid $secondary; /* Blue */
+  border: 2px solid $primaryVeryLight;
+  border-top: 2px solid $secondary;
   border-radius: 50%;
   width: 16px;
   height: 16px;

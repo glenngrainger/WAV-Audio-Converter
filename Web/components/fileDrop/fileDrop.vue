@@ -28,7 +28,7 @@ function dropFileHandler(e) {
     files.value.push({
       file,
       converted: false,
-      currentlyTransfering: false,
+      currentlyConverting: false,
       error: tooLarge,
       errorMessage: tooLarge ? "Too large" : "",
       download: undefined,
@@ -50,7 +50,7 @@ async function initConvert(e) {
   for (let index = 0; index < files.value.length; index++) {
     const file = files.value[index];
     if (!file.converted && !file.error) {
-      file.currentlyTransfering = true;
+      file.currentlyConverting = true;
       try {
         let formData = new FormData();
         formData.append("file", file.file);
@@ -74,7 +74,7 @@ async function initConvert(e) {
         file.error = true;
       }
 
-      file.currentlyTransfering = false;
+      file.currentlyConverting = false;
     }
   }
 
