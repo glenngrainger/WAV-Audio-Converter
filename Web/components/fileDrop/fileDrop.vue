@@ -47,47 +47,39 @@ async function initConvert(e) {
   e.preventDefault();
   isConverting.value = true;
 
-  let promises = [];
+  for (let index = 0; index < files.value.length; index++) {
+    const file = files.value[index];
+    if (!file.converted && !file.error) {
+      file.currentlyTransfering = true;
+      try {
+        let formData = new FormData();
+        formData.append("file", file.file);
 
-  files.value.forEach(async (file) => {
-    promises.push(
-      new Promise(async (resolve, reject) => {
-        if (!file.converted && !file.error) {
-          file.currentlyTransfering = true;
-          try {
-            let formData = new FormData();
-            formData.append("file", file.file);
+        let resp = await axios.post("/", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          responseType: "blob",
+        });
 
-            let resp = await axios.post("/", formData, {
-              headers: { "Content-Type": "multipart/form-data" },
-              responseType: "blob",
-            });
+        file.download = {
+          blob: await resp.data,
+          fileName: file.file.name.replace(".wav", ".mp3"),
+        };
 
-            file.download = {
-              blob: await resp.data,
-              fileName: file.file.name.replace(".wav", ".mp3"),
-            };
-
-            if (resp.status === 200) {
-              file.converted = true;
-            } else {
-              file.error = true;
-            }
-          } catch (err) {
-            file.error = true;
-          }
-
-          file.currentlyTransfering = false;
+        if (resp.status === 200) {
+          file.converted = true;
+        } else {
+          file.error = true;
         }
-        resolve();
-      })
-    );
-  });
+      } catch (err) {
+        file.error = true;
+      }
 
-  Promise.all(promises).then(() => {
-    isConverting.value = false;
-    convertionComplete.value = true;
-  });
+      file.currentlyTransfering = false;
+    }
+  }
+
+  isConverting.value = false;
+  convertionComplete.value = true;
 }
 
 function getFileSize(file) {
